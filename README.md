@@ -32,3 +32,20 @@ docker compose up -d --build
 | Website | https://localhost |
 | Quản lý đặt tour | https://localhost/Tours/Bookings |
 | pgAdmin | https://localhost/pgadmin/ |
+| Grafana | https://localhost/grafana/ (admin / GRAFANA_ADMIN_PASSWORD) |
+| Prometheus | http://localhost:9090 (chỉ truy cập từ máy chủ) |
+
+## Giám sát (Prometheus + Grafana)
+| Nguồn số liệu | Giám sát | Dashboard Grafana (ID) |
+|---|---|---|
+| cAdvisor | Container: CPU, RAM, network | 14282 |
+| nginx-exporter | Web server Nginx | 12708 |
+| postgres-exporter (user `db_exporter`, quyền `pg_monitor`) | PostgreSQL | 9628 |
+| app `/metrics` (prometheus-net) | Request vào web Booking Tour | Booking Tour App |
+
+Lần đầu chạy, nếu DB đã tồn tại từ trước, tạo user giám sát DB:
+```bash
+MSYS_NO_PATHCONV=1 docker compose exec postgres bash /docker-entrypoint-initdb.d/02-monitoring.sh
+```
+
+> Lưu ý Docker Desktop: tắt *Settings → General → Use containerd for pulling and storing images* để cAdvisor đọc được tên container.
