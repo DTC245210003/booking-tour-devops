@@ -1,0 +1,16 @@
+@model BookingForm
+@{
+    ViewData["Title"] = "Đặt tour";
+    var s = (Schedule)ViewBag.Schedule;
+}
+<h1>Đặt tour: @s.Tour!.Name</h1>
+<p>Khởi hành @s.StartDate.ToString("dd/MM/yyyy"), còn @s.Seats chỗ</p>
+<form asp-action="Book" method="post" style="max-width:480px">
+    <input type="hidden" asp-for="ScheduleId" />
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="mb-3"><label class="form-label">Họ tên</label><input asp-for="FullName" class="form-control" /></div>
+    <div class="mb-3"><label class="form-label">Số điện thoại</label><input asp-for="Phone" class="form-control" /></div>
+    <div class="mb-3"><label class="form-label">Email</label><input asp-for="Email" class="form-control" /></div>
+    <div class="mb-3"><label class="form-label">Số người</label><input asp-for="NumPeople" class="form-control" /></div>
+    <button class="btn btn-primary">Xác nhận đặt</button>
+</form>

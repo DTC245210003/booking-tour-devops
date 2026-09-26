@@ -1,0 +1,16 @@
+@model List<Booking>
+@{ ViewData["Title"] = "Quản lý đặt tour"; }
+<h1>Danh sách đặt tour</h1>
+<table class="table table-striped">
+    <thead><tr><th>#</th><th>Khách hàng</th><th>SĐT</th><th>Tour</th><th>Ngày đi</th><th>Số người</th><th>Thời gian đặt</th></tr></thead>
+    <tbody>
+    @foreach (var b in Model)
+    {
+        <tr>
+            <td>@b.Id</td><td>@b.Customer!.FullName</td><td>@b.Customer.Phone</td>
+            <td>@b.Schedule!.Tour!.Name</td><td>@b.Schedule.StartDate.ToString("dd/MM/yyyy")</td>
+            <td>@b.NumPeople</td><td>@b.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+        </tr>
+    }
+    </tbody>
+</table>

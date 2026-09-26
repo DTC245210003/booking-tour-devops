@@ -1,0 +1,5 @@
+.env
+app/bin/
+app/obj/
+.vs/
+nginx/certs/*.key

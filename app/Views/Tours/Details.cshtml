@@ -1,0 +1,20 @@
+@model Tour
+@{ ViewData["Title"] = Model.Name; }
+@if (TempData["Msg"] is string msg) { <div class="alert alert-success">@msg</div> }
+<h1>@Model.Name</h1>
+<p class="text-muted">@Model.Destination · @Model.Days ngày · @Model.Price.ToString("N0") đ</p>
+<p>@Model.Description</p>
+<h4>Lịch khởi hành</h4>
+<table class="table">
+    <thead><tr><th>Ngày đi</th><th>Còn chỗ</th><th></th></tr></thead>
+    <tbody>
+    @foreach (var s in Model.Schedules.OrderBy(s => s.StartDate))
+    {
+        <tr>
+            <td>@s.StartDate.ToString("dd/MM/yyyy")</td>
+            <td>@s.Seats</td>
+            <td><a asp-action="Book" asp-route-scheduleId="@s.Id" class="btn btn-sm btn-success">Đặt tour</a></td>
+        </tr>
+    }
+    </tbody>
+</table>

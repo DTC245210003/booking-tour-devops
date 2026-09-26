@@ -1,0 +1,16 @@
+@model List<Tour>
+@{ ViewData["Title"] = "Danh sách tour"; }
+<h1 class="mb-4">Tour du lịch</h1>
+<div class="row">
+@foreach (var t in Model)
+{
+    <div class="col-md-4 mb-3">
+        <div class="card h-100"><div class="card-body">
+            <h5 class="card-title">@t.Name</h5>
+            <p class="text-muted">@t.Destination · @t.Days ngày</p>
+            <p class="fw-bold">@t.Price.ToString("N0") đ</p>
+            <a asp-action="Details" asp-route-id="@t.Id" class="btn btn-primary">Xem chi tiết</a>
+        </div></div>
+    </div>
+}
+</div>
