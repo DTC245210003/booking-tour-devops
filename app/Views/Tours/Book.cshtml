@@ -3,14 +3,54 @@
     ViewData["Title"] = "Đặt tour";
     var s = (Schedule)ViewBag.Schedule;
 }
-<h1>Đặt tour: @s.Tour!.Name</h1>
-<p>Khởi hành @s.StartDate.ToString("dd/MM/yyyy"), còn @s.Seats chỗ</p>
-<form asp-action="Book" method="post" style="max-width:480px">
-    <input type="hidden" asp-for="ScheduleId" />
-    <div asp-validation-summary="All" class="text-danger"></div>
-    <div class="mb-3"><label class="form-label">Họ tên</label><input asp-for="FullName" class="form-control" /></div>
-    <div class="mb-3"><label class="form-label">Số điện thoại</label><input asp-for="Phone" class="form-control" /></div>
-    <div class="mb-3"><label class="form-label">Email</label><input asp-for="Email" class="form-control" /></div>
-    <div class="mb-3"><label class="form-label">Số người</label><input asp-for="NumPeople" class="form-control" /></div>
-    <button class="btn btn-primary">Xác nhận đặt</button>
-</form>
+<div class="row g-4 fade-in">
+    <div class="col-lg-5">
+        <div class="panel h-100">
+            <div class="tour-cover rounded-4 mb-3 @TourStyle.Css(s.Tour!.Destination)"><img src="@TourStyle.Image(s.Tour.Destination)" alt="@s.Tour.Name" class="cover-img" /></div>
+            <h3 class="fw-bold">@s.Tour.Name</h3>
+            <p class="text-muted">📍 @s.Tour.Destination · 🕒 @s.Tour.Days ngày</p>
+            <ul class="list-unstyled fs-5">
+                <li class="mb-2">📅 Khởi hành: <b>@s.StartDate.ToString("dd/MM/yyyy")</b></li>
+                <li class="mb-2">💺 Còn trống: <span class="seat @TourStyle.SeatCss(s.Seats)">@s.Seats chỗ</span></li>
+                <li>💰 Giá: <span class="price">@s.Tour.Price.ToString("N0") đ</span> / người</li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="panel">
+            <h3 class="fw-bold mb-3">🧾 Thông tin đặt chỗ</h3>
+            <form asp-action="Book" method="post">
+                <input type="hidden" asp-for="ScheduleId" />
+                <div asp-validation-summary="All" class="text-danger mb-2"></div>
+                <div class="mb-3"><label class="form-label fw-semibold">Họ và tên</label>
+                    <input asp-for="FullName" class="form-control" placeholder="Nguyễn Văn A" /></div>
+                <div class="row">
+                    <div class="col-md-6 mb-3"><label class="form-label fw-semibold">Số điện thoại</label>
+                        <input asp-for="Phone" class="form-control" placeholder="09xx xxx xxx" /></div>
+                    <div class="col-md-6 mb-3"><label class="form-label fw-semibold">Email (không bắt buộc)</label>
+                        <input asp-for="Email" class="form-control" placeholder="ban@email.com" /></div>
+                </div>
+                <div class="mb-3"><label class="form-label fw-semibold">Số người</label>
+                    <input asp-for="NumPeople" class="form-control" min="1" max="@s.Seats" /></div>
+                <div class="total-box">
+                    <div class="text-muted">Tổng tiền dự kiến</div>
+                    <div id="total" class="price fs-3">0 đ</div>
+                </div>
+                <button class="btn btn-brand w-100 py-2 fs-5">✅ Xác nhận đặt tour</button>
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts {
+<script>
+    const price = @((long)s.Tour!.Price);
+    const input = document.getElementById("NumPeople");
+    const total = document.getElementById("total");
+    function update() {
+        const n = parseInt(input.value) || 0;
+        total.textContent = (n * price).toLocaleString("vi-VN") + " đ";
+    }
+    input.addEventListener("input", update);
+    update();
+</script>
+}

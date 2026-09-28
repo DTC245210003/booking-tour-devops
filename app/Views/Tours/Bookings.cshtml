@@ -1,16 +1,43 @@
 @model List<Booking>
-@{ ViewData["Title"] = "Quản lý đặt tour"; }
-<h1>Danh sách đặt tour</h1>
-<table class="table table-striped">
-    <thead><tr><th>#</th><th>Khách hàng</th><th>SĐT</th><th>Tour</th><th>Ngày đi</th><th>Số người</th><th>Thời gian đặt</th></tr></thead>
-    <tbody>
-    @foreach (var b in Model)
-    {
-        <tr>
-            <td>@b.Id</td><td>@b.Customer!.FullName</td><td>@b.Customer.Phone</td>
-            <td>@b.Schedule!.Tour!.Name</td><td>@b.Schedule.StartDate.ToString("dd/MM/yyyy")</td>
-            <td>@b.NumPeople</td><td>@b.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
-        </tr>
-    }
-    </tbody>
-</table>
+@{
+    ViewData["Title"] = "Quản lý đặt tour";
+    var people = Model.Sum(b => b.NumPeople);
+    var revenue = Model.Sum(b => b.NumPeople * b.Schedule!.Tour!.Price);
+}
+<h1 class="fw-bold mb-4 fade-in">📊 Quản lý đặt tour</h1>
+<div class="row g-3 mb-4">
+    <div class="col-md-4 fade-in"><div class="stat-card g1"><div>🧾 Tổng số đơn</div><div class="n">@Model.Count</div></div></div>
+    <div class="col-md-4 fade-in" style="animation-delay:.1s"><div class="stat-card g2"><div>👥 Tổng lượt khách</div><div class="n">@people</div></div></div>
+    <div class="col-md-4 fade-in" style="animation-delay:.2s"><div class="stat-card g3"><div>💰 Doanh thu dự kiến</div><div class="n">@revenue.ToString("N0") đ</div></div></div>
+</div>
+<div class="panel fade-in" style="animation-delay:.25s">
+@if (Model.Count == 0)
+{
+    <p class="text-center text-muted fs-5 my-4">Chưa có đơn đặt tour nào 🌱</p>
+}
+else
+{
+    <div class="table-responsive">
+    <table class="table table-hover table-modern align-middle mb-0">
+        <thead><tr><th>#</th><th>Khách hàng</th><th>SĐT</th><th>Tour</th><th>Ngày đi</th><th>Số người</th><th>Thành tiền</th><th>Thời gian đặt</th></tr></thead>
+        <tbody>
+        @foreach (var b in Model)
+        {
+            var name = b.Customer!.FullName.Trim();
+            var initial = name.Length > 0 ? name.Split(' ').Last()[..1].ToUpper() : "?";
+            <tr>
+                <td class="fw-bold">@b.Id</td>
+                <td><span class="avatar">@initial</span>@name</td>
+                <td>@b.Customer.Phone</td>
+                <td>@TourStyle.Icon(b.Schedule!.Tour!.Destination) @b.Schedule.Tour.Name</td>
+                <td>@b.Schedule.StartDate.ToString("dd/MM/yyyy")</td>
+                <td><span class="badge rounded-pill text-bg-info">@b.NumPeople</span></td>
+                <td class="fw-bold text-danger">@((b.NumPeople * b.Schedule.Tour.Price).ToString("N0")) đ</td>
+                <td class="text-muted">@b.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+    </div>
+}
+</div>

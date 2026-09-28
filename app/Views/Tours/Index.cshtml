@@ -1,16 +1,32 @@
 @model List<Tour>
-@{ ViewData["Title"] = "Danh sách tour"; }
-<h1 class="mb-4">Tour du lịch</h1>
-<div class="row">
-@foreach (var t in Model)
+@{ ViewData["Title"] = "Khám phá tour du lịch"; }
+<section class="hero fade-in">
+    <h1>Khám phá Việt Nam cùng BookingTour ✈️</h1>
+    <p class="lead mb-3">Chọn hành trình yêu thích, đặt chỗ chỉ trong một phút.</p>
+    <span class="stat">🗺️ @Model.Count tour</span>
+    <span class="stat">📍 @Model.Select(t => t.Destination).Distinct().Count() điểm đến</span>
+</section>
+
+<h2 class="section-title">🔥 Tour nổi bật</h2>
+<div class="row g-4">
+@for (var i = 0; i < Model.Count; i++)
 {
-    <div class="col-md-4 mb-3">
-        <div class="card h-100"><div class="card-body">
-            <h5 class="card-title">@t.Name</h5>
-            <p class="text-muted">@t.Destination · @t.Days ngày</p>
-            <p class="fw-bold">@t.Price.ToString("N0") đ</p>
-            <a asp-action="Details" asp-route-id="@t.Id" class="btn btn-primary">Xem chi tiết</a>
-        </div></div>
+    var t = Model[i];
+    <div class="col-md-6 col-lg-4 fade-in" style="animation-delay:@(i * 0.12)s">
+        <div class="tour-card">
+            <div class="tour-cover @TourStyle.Css(t.Destination)">
+                <span class="badge-days">🕒 @t.Days ngày</span>
+                <img src="@TourStyle.Image(t.Destination)" alt="@t.Name" class="cover-img" loading="lazy" />
+            </div>
+            <div class="p-4">
+                <h5 class="fw-bold mb-1">@t.Name</h5>
+                <p class="text-muted mb-3">📍 @t.Destination</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div><small class="text-muted d-block">Chỉ từ</small><span class="price">@t.Price.ToString("N0") đ</span></div>
+                    <a asp-action="Details" asp-route-id="@t.Id" class="btn btn-brand">Xem chi tiết →</a>
+                </div>
+            </div>
+        </div>
     </div>
 }
 </div>

@@ -1,20 +1,51 @@
 @model Tour
 @{ ViewData["Title"] = Model.Name; }
-@if (TempData["Msg"] is string msg) { <div class="alert alert-success">@msg</div> }
-<h1>@Model.Name</h1>
-<p class="text-muted">@Model.Destination · @Model.Days ngày · @Model.Price.ToString("N0") đ</p>
-<p>@Model.Description</p>
-<h4>Lịch khởi hành</h4>
-<table class="table">
-    <thead><tr><th>Ngày đi</th><th>Còn chỗ</th><th></th></tr></thead>
-    <tbody>
-    @foreach (var s in Model.Schedules.OrderBy(s => s.StartDate))
-    {
-        <tr>
-            <td>@s.StartDate.ToString("dd/MM/yyyy")</td>
-            <td>@s.Seats</td>
-            <td><a asp-action="Book" asp-route-scheduleId="@s.Id" class="btn btn-sm btn-success">Đặt tour</a></td>
-        </tr>
-    }
-    </tbody>
-</table>
+@if (TempData["Msg"] is string msg)
+{
+    <div class="alert alert-success rounded-4 shadow-sm fade-in fs-5">🎉 @msg Chúng tôi sẽ liên hệ với bạn sớm.</div>
+}
+<div class="detail-head detail-photo @TourStyle.Css(Model.Destination) fade-in" style="background-image:linear-gradient(90deg,rgba(15,23,42,.75),rgba(15,23,42,.15)),url('@TourStyle.Image(Model.Destination)')">
+    <div>
+        <h1 class="mb-2">@Model.Name</h1>
+        <p class="fs-5 mb-0">📍 @Model.Destination · 🕒 @Model.Days ngày</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-7 fade-in">
+        <div class="panel h-100">
+            <h4 class="fw-bold mb-3">📝 Giới thiệu hành trình</h4>
+            <p class="fs-5">@Model.Description</p>
+            <div class="row g-3 mt-2">
+                <div class="col-6 col-md-3"><div class="info-tile"><div class="v">📍</div><div class="k">@Model.Destination</div></div></div>
+                <div class="col-6 col-md-3"><div class="info-tile"><div class="v">@Model.Days</div><div class="k">ngày</div></div></div>
+                <div class="col-6 col-md-3"><div class="info-tile"><div class="v">@Model.Schedules.Count</div><div class="k">lịch khởi hành</div></div></div>
+                <div class="col-6 col-md-3"><div class="info-tile"><div class="v text-danger">@((Model.Price / 1000000m).ToString("0.#"))tr</div><div class="k">đ / người</div></div></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5 fade-in" style="animation-delay:.15s">
+        <div class="panel">
+            <h4 class="fw-bold mb-2">📅 Lịch khởi hành</h4>
+            <p class="price mb-2">@Model.Price.ToString("N0") đ <small class="text-muted fs-6 fw-normal">/ người</small></p>
+            @foreach (var s in Model.Schedules.OrderBy(s => s.StartDate))
+            {
+                <div class="sched">
+                    <div>
+                        <div class="fw-bold">@s.StartDate.ToString("dd/MM/yyyy")</div>
+                        <span class="seat @TourStyle.SeatCss(s.Seats)">💺 @(s.Seats == 0 ? "Hết chỗ" : $"Còn {s.Seats} chỗ")</span>
+                    </div>
+                    @if (s.Seats > 0)
+                    {
+                        <a asp-action="Book" asp-route-scheduleId="@s.Id" class="btn btn-brand">Đặt ngay</a>
+                    }
+                    else
+                    {
+                        <button class="btn btn-secondary rounded-pill" disabled>Hết chỗ</button>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<a asp-action="Index" class="btn btn-link mt-3">← Quay lại danh sách tour</a>
